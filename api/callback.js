@@ -55,8 +55,15 @@ async function replyMessage(replyToken, text) {
 
   try {
     const response = await fetch(url, { method: 'POST', headers, body });
+
     console.log('回覆結果狀態碼:', response.status);
-    console.log('回覆結果內容:', await response.text());
+
+    const resultText = await response.text();
+    console.log('回覆結果內容:', resultText || '(空)');
+
+    if (!response.ok) {
+      console.error('LINE API 回覆非 200，可能原因：Token 錯誤、replyToken 過期、訊息格式錯誤');
+    }
   } catch (err) {
     console.error('呼叫 LINE API 失敗:', err);
   }
