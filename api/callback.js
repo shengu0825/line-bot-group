@@ -1,11 +1,8 @@
-// 1. 確保 IPv4 優先，避免 IPv6 造成 TLS 連線不穩
 import dns from 'dns';
 dns.setDefaultResultOrder('ipv4first');
 
-// 2. 匯入 LINE 官方 SDK
 import { Client } from '@line/bot-sdk';
 
-// 3. 建立 LINE Bot 客戶端，設定 5 秒超時
 const client = new Client({
   channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
   timeout: 5000
@@ -36,13 +33,17 @@ export default async function handler(req, res) {
       return;
     }
 
-    console.log('收到 LINE Webhook:', req.body);
-
     for (const event of req.body.events) {
-      console.log('收到的 message 內容:', event.message);
+      console.log('收到 LINE Webhook:', event);
 
       if (event.type === 'message' && event.message?.type === 'text') {
+        // **第一步：立即回覆**
         await replyMessage(event.replyToken, `你說了：「${event.message.text}」`);
+
+        // **第二步：再做其他邏輯（非即時回覆的處理）**
+        // 例如：存資料庫、呼叫其他 API、分析訊息內容等
+        console.log('後續處理邏輯開始...');
+        // ...你的額外處理程式碼
       }
     }
   } catch (err) {
@@ -58,7 +59,7 @@ async function replyMessage(replyToken, text) {
       { type: 'text', text }
     ]);
 
-    console.log('LINE API 呼叫完成，回傳結果:', result);
+    console.log('回覆成功:', result);
   } catch (err) {
     console.error('回覆失敗:');
     console.error('錯誤名稱:', err.name);
