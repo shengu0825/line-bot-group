@@ -42,7 +42,7 @@ export default async function handler(req, res) {
       console.log('收到的 message 內容:', event.message);
 
       if (event.type === 'message' && event.message?.type === 'text') {
-       await replyMessage(event.replyToken, `你說了：「${event.message.text}」`);
+        await replyMessage(event.replyToken, `你說了：「${event.message.text}」`);
       }
     }
   } catch (err) {
@@ -52,17 +52,23 @@ export default async function handler(req, res) {
 
 async function replyMessage(replyToken, text) {
   try {
+    console.log('即將呼叫 LINE API，回覆內容:', text);
+
+    // 呼叫 LINE API
     const result = await client.replyMessage(replyToken, [
       { type: 'text', text }
     ]);
-    console.log('回覆成功:', result);
+
+    console.log('LINE API 呼叫完成，回傳結果:', result);
   } catch (err) {
     console.error('回覆失敗:');
     console.error('錯誤名稱:', err.name);
     console.error('錯誤訊息:', err.message);
     console.error('完整錯誤物件:', err);
-    if (err.originalError?.response?.data) {
-      console.error('LINE API 回覆內容:', err.originalError.response.data);
+
+    if (err.originalError?.response) {
+      console.error('HTTP 狀態碼:', err.originalError.response.status);
+      console.error('HTTP 回應內容:', err.originalError.response.data);
     }
   }
 }
