@@ -9,9 +9,12 @@ export const config = {
 };
 
 export default async function handler(req, res) {
+  // 🔍 這裡加檢查 Token 是否存在
+  console.log('TOKEN 是否存在:', !!process.env.LINE_CHANNEL_ACCESS_TOKEN);
+
   if (req.method === 'POST') {
     console.log('收到 LINE Webhook:', req.body);
-    res.status(200).send('OK'); // 先回 200，避免超時
+    res.status(200).send('OK'); // 先回 200
 
     const events = req.body.events;
     for (const event of events) {
@@ -37,7 +40,8 @@ async function replyMessage(replyToken, text) {
 
   try {
     const response = await fetch(url, { method: 'POST', headers, body });
-    console.log('回覆結果:', await response.text());
+    console.log('回覆結果狀態碼:', response.status);
+    console.log('回覆結果內容:', await response.text());
   } catch (err) {
     console.error('回覆失敗:', err);
   }
