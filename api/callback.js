@@ -42,7 +42,7 @@ export default async function handler(req, res) {
       console.log('收到的 message 內容:', event.message);
 
       if (event.type === 'message' && event.message?.type === 'text') {
-        await replyMessage(event.replyToken, `你說了：「${event.message.text}」`);
+       await replyMessage(event.replyToken, `你說了：「${event.message.text}」`);
       }
     }
   } catch (err) {
