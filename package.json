@@ -8,7 +8,10 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@line/bot-sdk": "^9.5.3"
+    "@line/bot-sdk": "^9.5.3",
+    "axios": "^1.12.2"
   },
-  "engines": { "node": "22" }
+  "engines": {
+    "node": "22"
+  }
 }
