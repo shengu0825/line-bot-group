@@ -1,4 +1,5 @@
-import fetch from 'node-fetch';
+import dns from 'dns';
+dns.setDefaultResultOrder('ipv4first');
 
 export const config = {
   api: {
