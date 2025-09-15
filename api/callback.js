@@ -40,7 +40,6 @@ export default async function handler(req, res) {
 }
 
 async function replyMessage(replyToken, text) {
-  // 新增這行：先印出要回覆的內容
   console.log('準備回覆訊息，replyToken:', replyToken, 'text:', text);
 
   const url = 'https://api.line.me/v2/bot/message/reply';
@@ -55,9 +54,15 @@ async function replyMessage(replyToken, text) {
 
   try {
     const response = await fetch(url, { method: 'POST', headers, body });
-    const resultText = await response.text();
+
     console.log('回覆結果狀態碼:', response.status);
-    console.log('回覆結果內容:', resultText);
+
+    const resultText = await response.text();
+    console.log('回覆結果內容:', resultText || '(空)');
+
+    if (!response.ok) {
+      console.error('LINE API 回覆非 200，可能原因：Token 錯誤、replyToken 過期、訊息格式錯誤');
+    }
   } catch (err) {
     console.error('呼叫 LINE API 失敗:', err);
   }
