@@ -54,7 +54,6 @@ async function replyMessage(replyToken, text) {
   try {
     console.log('即將呼叫 LINE API，回覆內容:', text);
 
-    // 呼叫 LINE API
     const result = await client.replyMessage(replyToken, [
       { type: 'text', text }
     ]);
