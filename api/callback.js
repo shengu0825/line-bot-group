@@ -52,6 +52,12 @@ async function replyMessage(replyToken, text) {
     ]);
     console.log('回覆成功:', result);
   } catch (err) {
-    console.error('回覆失敗:', err.originalError?.response?.data || err);
+    console.error('回覆失敗:');
+    console.error('錯誤名稱:', err.name);
+    console.error('錯誤訊息:', err.message);
+    console.error('完整錯誤物件:', err);
+    if (err.originalError?.response?.data) {
+      console.error('LINE API 回覆內容:', err.originalError.response.data);
+    }
   }
 }
