@@ -1,5 +1,5 @@
 import dns from 'dns';
-dns.setDefaultResultOrder('ipv4first');
+dns.setDefaultResultOrder('ipv4first'); // 優先 IPv4，避免 IPv6 連線問題
 
 export const config = {
   api: {
@@ -31,7 +31,6 @@ export default async function handler(req, res) {
     for (const event of req.body.events) {
       console.log('收到的 message 內容:', event.message);
 
-      // 直接回覆原文
       if (event.type === 'message' && event.message?.type === 'text') {
         await replyMessage(event.replyToken, `你說了：「${event.message.text}」`);
       }
@@ -56,11 +55,8 @@ async function replyMessage(replyToken, text) {
 
   try {
     const response = await fetch(url, { method: 'POST', headers, body });
-
     console.log('回覆結果狀態碼:', response.status);
-
-    const resultText = await response.text();
-    console.log('回覆結果內容:', resultText || '(空)');
+    console.log('回覆結果內容:', await response.text());
 
     if (!response.ok) {
       console.error('LINE API 回覆非 200，可能原因：Token 錯誤、replyToken 過期、訊息格式錯誤');
