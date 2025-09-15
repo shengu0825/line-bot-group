@@ -40,6 +40,9 @@ export default async function handler(req, res) {
 }
 
 async function replyMessage(replyToken, text) {
+  // 新增這行：先印出要回覆的內容
+  console.log('準備回覆訊息，replyToken:', replyToken, 'text:', text);
+
   const url = 'https://api.line.me/v2/bot/message/reply';
   const headers = {
     'Content-Type': 'application/json',
