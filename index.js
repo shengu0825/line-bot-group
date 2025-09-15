@@ -1,8 +1,6 @@
 import express from 'express';
 
 const app = express();
-
-// 讓 Express 能解析 JSON
 app.use(express.json());
 
 // 處理 LINE Webhook
