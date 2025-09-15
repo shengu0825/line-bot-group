@@ -1,12 +1,13 @@
-import express from 'express';
-import serverless from 'serverless-http';
+export default function handler(req, res) {
+  if (req.method === 'POST') {
+    console.log('收到 LINE Webhook:', req.body);
 
-const app = express();
-app.use(express.json());
+    // 先立即回應 200，避免超時
+    res.status(200).send('OK');
 
-app.post('/callback', (req, res) => {
-  console.log('收到 LINE Webhook:', req.body);
-  res.status(200).send('OK');
-});
-
-export default serverless(app);
+    // 這裡可以非同步處理事件，不影響回應速度
+    // handleEvent(req.body.events);
+  } else {
+    res.status(405).send('Method Not Allowed');
+  }
+}
