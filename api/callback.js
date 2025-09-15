@@ -28,11 +28,12 @@ export default async function handler(req, res) {
     console.log('收到 LINE Webhook:', req.body);
 
     for (const event of req.body.events) {
-      // 印出完整 message 內容
       console.log('收到的 message 內容:', event.message);
 
-      // 不管訊息類型，直接回覆
-      await replyMessage(event.replyToken, `收到訊息類型：${event.message?.type || '未知'}`);
+      // 直接回覆原文
+      if (event.type === 'message' && event.message?.type === 'text') {
+        await replyMessage(event.replyToken, `你說了：「${event.message.text}」`);
+      }
     }
   } catch (err) {
     console.error('事件處理錯誤:', err);
@@ -54,15 +55,8 @@ async function replyMessage(replyToken, text) {
 
   try {
     const response = await fetch(url, { method: 'POST', headers, body });
-
     console.log('回覆結果狀態碼:', response.status);
-
-    const resultText = await response.text();
-    console.log('回覆結果內容:', resultText || '(空)');
-
-    if (!response.ok) {
-      console.error('LINE API 回覆非 200，可能原因：Token 錯誤、replyToken 過期、訊息格式錯誤');
-    }
+    console.log('回覆結果內容:', await response.text());
   } catch (err) {
     console.error('呼叫 LINE API 失敗:', err);
   }
