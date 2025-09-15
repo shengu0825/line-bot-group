@@ -1,5 +1,11 @@
 import dns from 'dns';
-dns.setDefaultResultOrder('ipv4first'); // 優先 IPv4，避免 IPv6 連線問題
+dns.setDefaultResultOrder('ipv4first');
+
+import { Client } from '@line/bot-sdk';
+
+const client = new Client({
+  channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN
+});
 
 export const config = {
   api: {
@@ -17,7 +23,6 @@ export default async function handler(req, res) {
     return;
   }
 
-  // 先回 200，避免 replyToken 過期
   res.status(200).send('OK');
 
   try {
@@ -41,27 +46,12 @@ export default async function handler(req, res) {
 }
 
 async function replyMessage(replyToken, text) {
-  console.log('準備回覆訊息，replyToken:', replyToken, 'text:', text);
-
-  const url = 'https://api.line.me/v2/bot/message/reply';
-  const headers = {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${process.env.LINE_CHANNEL_ACCESS_TOKEN}`
-  };
-  const body = JSON.stringify({
-    replyToken,
-    messages: [{ type: 'text', text }]
-  });
-
   try {
-    const response = await fetch(url, { method: 'POST', headers, body });
-    console.log('回覆結果狀態碼:', response.status);
-    console.log('回覆結果內容:', await response.text());
-
-    if (!response.ok) {
-      console.error('LINE API 回覆非 200，可能原因：Token 錯誤、replyToken 過期、訊息格式錯誤');
-    }
+    const result = await client.replyMessage(replyToken, [
+      { type: 'text', text }
+    ]);
+    console.log('回覆成功:', result);
   } catch (err) {
-    console.error('呼叫 LINE API 失敗:', err);
+    console.error('回覆失敗:', err.originalError?.response?.data || err);
   }
 }
